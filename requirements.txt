@@ -1,7 +1,5 @@
 streamlit
 pandas
 plotly
-pymysql
-SQLAlchemy
 numpy
 groq

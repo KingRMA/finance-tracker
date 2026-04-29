@@ -13,14 +13,14 @@ A Streamlit web app for tracking personal spending, with AI-powered insights and
 
 ## Tech Stack
 
-| Layer          | Choice                          |
-|----------------|---------------------------------|
-| Frontend       | Streamlit                       |
-| Language       | Python 3.10+                    |
-| Database       | MySQL via SQLAlchemy            |
-| AI             | Groq Cloud API (LLaMA 3.1-8B)  |
-| Charts         | Plotly                          |
-| Data wrangling | pandas, numpy                   |
+| Layer          | Choice                         |
+|----------------|--------------------------------|
+| Frontend       | Streamlit                      |
+| Language       | Python 3.10+                   |
+| Database       | SQLite (zero config, file-based) |
+| AI             | Groq Cloud API (LLaMA 3.1-8B) |
+| Charts         | Plotly                         |
+| Data wrangling | pandas, numpy                  |
 
 ## Project Structure
 
@@ -43,43 +43,29 @@ requirements.txt
 pip install -r requirements.txt
 ```
 
-### 2. Configure secrets
+### 2. Configure AI (optional)
 
-Copy the example secrets file and fill in your own values:
+Copy the example secrets file:
 
 ```bash
 cp .streamlit/secrets.toml.example .streamlit/secrets.toml
 ```
 
-Then edit `.streamlit/secrets.toml` with your MySQL credentials and (optionally) a Groq API key:
+Add your Groq API key to `.streamlit/secrets.toml`:
 
 ```toml
 GROQ_API_KEY = "gsk_your_key_here"
-
-[connections.mysql]
-dialect = "mysql+pymysql"
-host = "localhost"
-port = 3306
-username = "root"
-password = "your_password"
-database = "finance_tracker"
 ```
 
-The app works without a Groq key — AI insights will be unavailable but everything else functions normally.
+The app works without this — AI insights will be unavailable but everything else functions normally. Get a free key at [console.groq.com](https://console.groq.com).
 
-### 3. Create the database
-
-```bash
-mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS finance_tracker;"
-```
-
-The app creates the `transactions` table automatically on first run.
-
-### 4. Run
+### 3. Run
 
 ```bash
 streamlit run Home.py
 ```
+
+The SQLite database (`finance_tracker.db`) is created automatically on first run. No database server needed.
 
 ## AI Usage
 
@@ -90,7 +76,7 @@ The AI feature uses Groq's free API tier with the LLaMA 3.1-8B model. When a tra
 - **Reason** — why the risk level was assigned
 - **Suggested action** — a concrete next step
 
-The AI call is cached for one hour to avoid redundant API calls. If the API is unreachable, the transaction still saves and the UI shows a graceful error.
+The AI call is cached for one hour to avoid redundant API calls. If the API is unreachable, the transaction still saves and the UI shows a graceful fallback message.
 
 ## Data Science Features
 

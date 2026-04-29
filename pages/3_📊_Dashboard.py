@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from sklearn.linear_model import LinearRegression
 import db
 
 st.set_page_config(page_title="Dashboard", page_icon="📊", layout="wide")
@@ -142,13 +143,14 @@ fig.add_trace(
 )
 
 if len(amounts) >= 2:
-    x_idx = np.arange(len(amounts), dtype=float)
-    coeffs = np.polyfit(x_idx, amounts, 1)
-    residual_std = float(np.std(amounts - np.polyval(coeffs, x_idx)))
+    X = np.arange(len(amounts)).reshape(-1, 1)
+    model = LinearRegression().fit(X, amounts)
 
-    future_idx = np.arange(len(amounts), len(amounts) + forecast_days, dtype=float)
-    forecast_vals = np.polyval(coeffs, future_idx)
-    forecast_vals = np.maximum(forecast_vals, 0.0)
+    residuals = amounts - model.predict(X)
+    residual_std = float(np.std(residuals))
+
+    future_X = np.arange(len(amounts), len(amounts) + forecast_days).reshape(-1, 1)
+    forecast_vals = np.maximum(model.predict(future_X), 0.0)
 
     last_date = dates[-1]
     future_dates = [last_date + timedelta(days=i + 1) for i in range(forecast_days)]

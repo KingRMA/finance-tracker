@@ -43,29 +43,37 @@ requirements.txt
 pip install -r requirements.txt
 ```
 
-### 2. Configure database
+### 2. Configure secrets
 
-Create a MySQL database, then add connection details to `.streamlit/secrets.toml`:
+Copy the example secrets file and fill in your own values:
+
+```bash
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+```
+
+Then edit `.streamlit/secrets.toml` with your MySQL credentials and (optionally) a Groq API key:
 
 ```toml
+GROQ_API_KEY = "gsk_your_key_here"
+
 [connections.mysql]
-dialect = "mysql"
+dialect = "mysql+pymysql"
 host = "localhost"
 port = 3306
-database = "finance_tracker"
-username = "your_user"
+username = "root"
 password = "your_password"
+database = "finance_tracker"
 ```
 
-### 3. Configure AI (optional)
+The app works without a Groq key — AI insights will be unavailable but everything else functions normally.
 
-Add your Groq API key to `.streamlit/secrets.toml`:
+### 3. Create the database
 
-```toml
-GROQ_API_KEY = "gsk_..."
+```bash
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS finance_tracker;"
 ```
 
-The app works without this — AI insights will show an error message and the rest of the app functions normally.
+The app creates the `transactions` table automatically on first run.
 
 ### 4. Run
 

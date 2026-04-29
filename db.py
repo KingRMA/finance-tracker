@@ -336,7 +336,11 @@ _DUMMY_EXPENSES = [
 def load_dummy_data(count=100):
     today = date.today()
     start = today - timedelta(days=150)
+    days_range = (today - start).days
     sample = random.sample(_DUMMY_EXPENSES, min(count, len(_DUMMY_EXPENSES)))
     for desc, cat, amt in sample:
-        rand_date = start + timedelta(days=random.randint(0, 150))
-        add_transaction(amt, desc, cat, rand_date.isoformat())
+        rand_date = start + timedelta(days=random.randint(0, days_range))
+        _execute(
+            "INSERT INTO transactions (amount, description, category, date) VALUES (?, ?, ?, ?)",
+            (amt, desc, cat, rand_date.isoformat()),
+        )
